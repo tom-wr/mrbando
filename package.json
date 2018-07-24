@@ -1,0 +1,16 @@
+{
+  "name": "mrbando",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./src/nameGenerator.js"
+  },
+  "author": "tom",
+  "license": "ISC",
+  "dependencies": {
+    "ask-sdk": "^2.0.7",
+    "lodash": "^4.17.10",
+    "request": "^2.87.0"
+  }
+}
