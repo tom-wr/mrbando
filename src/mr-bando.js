@@ -19,7 +19,10 @@ const base_options = {
 }
 
 const Word = (type, base_options) => {
-    const options = _.merge({ 'qs': { 'includePartOfSpeech': type} }, base_options);
+    return _.merge({ 'qs': { 'includePartOfSpeech': type} }, base_options);
+}
+
+const WordRequest = (options) => {
     return new Promise((resolve, reject) => {
         request(options, (error, response, body) => {
             resolve(body);
@@ -37,13 +40,14 @@ const VerbTransitive = Word('verb-transitive', base_options);
 const VerbIntransitive = Word('verb-transitive', base_options);
 
 const Templates = [
-    ['The', Noun, AuxVerb, 'be', Verb],
     [VerbTransitive, 'the', Noun],
     ['The', Adjective, Noun],
     ['The', Verb, 'of the', Noun],
     [Noun, 'and', Verb],
     [Verb, 'the', Noun],
-    ['The', AdVerb, Adjective]
+    ['The', AdVerb, Adjective],
+    ['The', Noun],
+    //['The', Noun, AuxVerb, 'be', Verb],
 ]
 
 const randomTemplate = (templates) => {
@@ -53,7 +57,7 @@ const randomTemplate = (templates) => {
 const getTemplateSlots = (template, slots = []) => {
     for(const item of template) {
         if(typeof item === 'object') {
-            slots.push(item);
+            slots.push(WordRequest(item));
         }
     }
     return slots;
@@ -74,9 +78,10 @@ const reconstructName = (originalTemplate, responseBody) => {
 }
 
 const generate = () => {
+    const template = randomTemplate(Templates);
+    const slots = getTemplateSlots(template);
+
     return new Promise((resolve, reject) => {
-        const template = randomTemplate(Templates);
-        const slots = getTemplateSlots(template);
         Promise.all(slots).then((data) => {
             resolve(reconstructName(template, data));
         }).catch((err) => {

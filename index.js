@@ -1,9 +1,14 @@
 const Alexa = require('ask-sdk-core');
 const MrBando = require('./src/mr-bando.js');
 
-MrBando.generate().then((name) => {
-    console.log(name)
-});
+function gen() {
+    return new Promise((resolve, reject) => {
+        setTimeout(async ()=>{
+            const name = await MrBando.generate();
+            resolve(name)
+        }, 3000);
+    });
+}
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -25,8 +30,8 @@ const GenerateOneHandler = {
         return handlerInput.requestEnvelope.request.type === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'GenerateOne';
     },
-    handle(handlerInput) {
-        const speechText = MrBando.generate();
+    async handle(handlerInput) {
+        const speechText = await MrBando.generate();
 
         return handlerInput.responseBuilder
         .speak(speechText)
